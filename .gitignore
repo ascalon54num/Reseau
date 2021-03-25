@@ -38,6 +38,8 @@ bld/
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
+.project
+.classpath
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
