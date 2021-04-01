@@ -65,7 +65,7 @@ public class ServiceClient implements Runnable {
                             .getBytes(StandardCharsets.UTF_8);
             try {
                 out.write(response, 0, response.length);
-            } catch (IOException e) {
+            } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
             }
         }
