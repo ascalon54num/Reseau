@@ -49,13 +49,23 @@ public class SiteReader {
     public static String getContentType(String path) {
         if (path.length() > 1) {
             String extension = getExtensionFromPath(path);
-            return switch (extension) {
-                case "html", "css" -> "text/" + extension;
-                case "js" -> "application/javascript";
-                case "png", "jpeg", "ico", "gif", "svg" -> "image/" + extension;
-                case "jpg" -> "image/jpeg";
-                default -> "";
-            };
+            switch (extension) {
+                case "html":
+                case "css":
+                    return "text/" + extension;
+                case "js":
+                    return "application/javascript";
+                case "png":
+                case "jpeg":
+                case "ico":
+                case "gif":
+                case "svg":
+                    return "image/" + extension;
+                case "jpg":
+                    return "image/jpeg";
+                default:
+                    return "";
+            }
         } else {
             return CONTENT_HTML;
         }
