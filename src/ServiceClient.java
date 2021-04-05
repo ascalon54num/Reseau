@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.stream.Stream;
+
+import jdk.internal.jshell.tool.resources.version;
 
 public class ServiceClient implements Runnable {
 
@@ -25,13 +28,31 @@ public class ServiceClient implements Runnable {
             try {
                 String path = in.readLine().split(" ")[1];
                 String dns = in.readLine().split(" ")[1];
-                out.write("HTTP/1.0 200 OK\r\n".getBytes());
+                String line = null;
+                Boolean stop = false;
+                String auth = null;
+                BufferedReader buffer = new BufferedReader(in);
+                while(buffer.ready() && Boolean.FALSE.equals(stop)){
+                    line= buffer.readLine();
+                    if (line.contains("Authorization")){
+                        auth = line.split(" ")[2];
+                        stop =true;
+                    }
+                }
+                byte[] content = SiteReader.get(dns, path, auth);
+                String codeRep =SiteReader.getCodeReponse();
+                out.write(("HTTP/1.0 "+codeRep+"\r\n").getBytes());
                 String contentType = SiteReader.getContentType(path);
                 if (!contentType.equals("")) {
                     out.write(("Content-Type: " + contentType + "\r\n").getBytes());
                 }
+                if (codeRep.equals("401 Unauthorized")){
+                    out.write(content);
+                }
                 out.write("\r\n".getBytes());
-                out.write(SiteReader.get(dns, path));
+                if( codeRep.equals("200 OK")){
+                    out.write(content);
+                }
 
                 closeFlux(in, out);
 

@@ -2,34 +2,43 @@ package utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Base64;
 
 public class SiteReader {
 
-    private final static String SITES_DIRECTORY = ConfigReader.getProp("hosts_dir");
+    private  static final String SITES_DIRECTORY = ConfigReader.getProp("hosts_dir");
     public static final String CONTENT_HTML = "text/html";
+    private static String codeReponse;
 
-    public static byte[] get(String dns, String path) {
+    public static byte[] get(String dns, String path, String auth) {
         if (path.equalsIgnoreCase("/")) {
             if (dns.equalsIgnoreCase(ConfigReader.getProp("address"))) {
-                return getDefaultHtml();
+                return getDefaultHtml(auth);
             } else {
-                return getRessource(dns, "index.html");
+                return getRessource(dns, "index.html", auth);
             }
         } else {
-            return getRessource(dns, path);
+            return getRessource(dns, path, auth);
         }
     }
 
-    private static byte[] getRessource(String dns, String path) {
+    private static byte[] getRessource(String dns, String path, String auth) {
         try {
+            byte[] res= null;
             File directory = new File(SITES_DIRECTORY);
             File[] list = directory.listFiles();
             for (File file : list) {
                 if (dns.contains(file.getName())) {
                     path = path.replace("/", "\\");
-                    return Files.readAllBytes(Paths.get(file.getPath() + "\\" + path));
+                    res = checkSecurity(file, path, auth);
+                    return res;
                 }
             }
         } catch (Exception ignored) {
@@ -37,9 +46,59 @@ public class SiteReader {
         return null; // TODO: Gerer Erreur 404
     }
 
-    public static byte[] getDefaultHtml() {
+    private static byte[] checkSecurity(File file, String path, String auth) throws IOException{
+        codeReponse ="200 OK";
+        byte[] res = Files.readAllBytes(Paths.get(file.getPath() + "\\" + path));
+        Boolean protege = Arrays.stream(file.list()).anyMatch(".htpasswd"::contains);
+        Boolean sendDatas =true;
+        if(Boolean.TRUE.equals(file.isDirectory() && protege) && auth == null) {
+            codeReponse = "401 Unauthorized";
+            res = ("WWW-Authenticate: Basic realm=\" Access to "+file.getPath() + "\\" + path+"\"\r\n").getBytes();
+        } else if(Boolean.TRUE.equals(file.isDirectory() && protege) && auth != null){
+            sendDatas= checkAuth(file.getPath(),auth);
+        }
+        if(Boolean.FALSE.equals(sendDatas) ){
+            codeReponse= "403 Forbidden";
+            res = "".getBytes();
+        }
+        return res;
+    }
+    private static Boolean checkAuth(String path, String auth) throws UnsupportedEncodingException {
+        boolean res =false;
+        SecurityReader.setPath(path);
+        byte[] decodedValue = Base64.getDecoder().decode(auth);
+        String[] credentials = (new String(decodedValue, StandardCharsets.UTF_8.toString())).split(":");
+        String hash = SecurityReader.getProp(credentials[0]);
+        if (hash != null){
+            MessageDigest md;
+            try {
+                md = MessageDigest.getInstance("MD5");
+        
+                md.update(credentials[1].getBytes());
+                byte[] digest = md.digest();
+                StringBuilder hashString = new StringBuilder();
+                for ( int i = 0; i < digest.length; ++i ) {
+                    String hex = Integer.toHexString(digest[i]);
+                    if ( hex.length() == 1 ) {
+                    hashString.append('0');
+                    hashString.append(hex.charAt(hex.length()-1));
+                    } else {
+                    hashString.append(hex.substring(hex.length()-2));
+                    }
+                }
+                res= hash.equals(hashString.toString());
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return res;
+    }
+
+    public static byte[] getDefaultHtml(String auth) {
         try {
-            return Files.readAllBytes(Paths.get(SITES_DIRECTORY + "\\index.html"));
+            File directory = new File(SITES_DIRECTORY);
+            return checkSecurity(directory, "\\index.html", auth);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -76,5 +135,9 @@ public class SiteReader {
         String file = split[split.length - 1];
         split = file.split("\\.");
         return split[split.length - 1];
+    }
+
+    public static String getCodeReponse() {
+        return codeReponse;
     }
 }
