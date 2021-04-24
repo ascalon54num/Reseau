@@ -43,7 +43,8 @@ public class SiteReader {
             }
         } catch (Exception ignored) {
         }
-        return null; // TODO: Gerer Erreur 404
+        codeReponse = "404 NOT FOUND";
+        return null;
     }
 
     private static byte[] checkSecurity(File file, String path, String auth) throws IOException{

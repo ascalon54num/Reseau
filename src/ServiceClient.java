@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.stream.Stream;
-
-import jdk.internal.jshell.tool.resources.version;
 
 public class ServiceClient implements Runnable {
 
@@ -57,8 +54,7 @@ public class ServiceClient implements Runnable {
                 closeFlux(in, out);
 
             } catch (Exception e) {
-                System.out.println("ERREUR 404 à retourner");
-                out.write("HTTP/1.0 404 Not Found\r\n".getBytes());
+                out.write("HTTP/1.0 404 NOT FOUND\r\n".getBytes());
                 closeFlux(in, out);
             }
         } catch (Exception ignored) {
