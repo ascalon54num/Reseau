@@ -18,6 +18,7 @@ public class SiteReader {
     private static String codeReponse;
 
     public static byte[] get(String dns, String path, String auth) {
+        System.out.println("PATH = " + path);
         if (path.equalsIgnoreCase("/")) {
             if (dns.equalsIgnoreCase(ConfigReader.getProp("address"))) {
                 return getDefaultHtml(auth);
@@ -31,14 +32,22 @@ public class SiteReader {
 
     private static byte[] getRessource(String dns, String path, String auth) {
         try {
-            byte[] res = null;
             File directory = new File(SITES_DIRECTORY);
             File[] list = directory.listFiles();
             for (File file : list) {
                 if (dns.contains(file.getName())) {
                     path = path.replace("/", "\\");
-                    res = checkSecurity(file, path, auth);
-                    return res;
+                    return checkSecurity(file, path, auth);
+                } else {
+                    String[] pathElements = path.split("/");
+                    if (pathElements.length > 1) {
+                        String firstPathElement = pathElements[1];
+                        if (firstPathElement.equals(file.getName())) {
+                            if (pathElements.length > 2) {
+                                return checkSecurity(file, path.replace("/" + firstPathElement, ""), auth);
+                            }
+                        }
+                    }
                 }
             }
         } catch (Exception ignored) {
