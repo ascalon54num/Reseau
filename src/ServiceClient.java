@@ -1,10 +1,8 @@
 import utils.SiteReader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.util.zip.GZIPOutputStream;
 
 public class ServiceClient implements Runnable {
 
@@ -29,25 +27,40 @@ public class ServiceClient implements Runnable {
                 Boolean stop = false;
                 String auth = null;
                 BufferedReader buffer = new BufferedReader(in);
-                while(buffer.ready() && Boolean.FALSE.equals(stop)){
-                    line= buffer.readLine();
-                    if (line.contains("Authorization")){
+                while (buffer.ready() && Boolean.FALSE.equals(stop)) {
+                    line = buffer.readLine();
+                    if (line.contains("Authorization")) {
                         auth = line.split(" ")[2];
-                        stop =true;
+                        stop = true;
                     }
                 }
                 byte[] content = SiteReader.get(dns, path, auth);
-                String codeRep =SiteReader.getCodeReponse();
-                out.write(("HTTP/1.0 "+codeRep+"\r\n").getBytes());
+                String codeRep = SiteReader.getCodeReponse();
+                out.write(("HTTP/1.0 " + codeRep + "\r\n").getBytes());
                 String contentType = SiteReader.getContentType(path);
+
+                if (SiteReader.canGzipThisRessource(path)) {
+                    ByteArrayOutputStream obj = new ByteArrayOutputStream();
+                    GZIPOutputStream gzip = new GZIPOutputStream(obj);
+                    gzip.write(content);
+                    gzip.flush();
+                    gzip.close();
+                    content = obj.toByteArray();
+                    obj.flush();
+                    obj.close();
+                    out.write("Content-Encoding: gzip\r\n".getBytes());
+                }
+
                 if (!contentType.equals("")) {
                     out.write(("Content-Type: " + contentType + "\r\n").getBytes());
                 }
-                if (codeRep.equals("401 Unauthorized")){
+
+                if (codeRep.equals("401 Unauthorized")) {
                     out.write(content);
                 }
                 out.write("\r\n".getBytes());
-                if( codeRep.equals("200 OK")){
+
+                if (codeRep.equals("200 OK")) {
                     out.write(content);
                 }
 

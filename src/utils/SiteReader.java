@@ -13,7 +13,7 @@ import java.util.Base64;
 
 public class SiteReader {
 
-    private  static final String SITES_DIRECTORY = ConfigReader.getProp("hosts_dir");
+    private static final String SITES_DIRECTORY = ConfigReader.getProp("hosts_dir");
     public static final String CONTENT_HTML = "text/html";
     private static String codeReponse;
 
@@ -31,7 +31,7 @@ public class SiteReader {
 
     private static byte[] getRessource(String dns, String path, String auth) {
         try {
-            byte[] res= null;
+            byte[] res = null;
             File directory = new File(SITES_DIRECTORY);
             File[] list = directory.listFiles();
             for (File file : list) {
@@ -47,52 +47,53 @@ public class SiteReader {
         return null;
     }
 
-    private static byte[] checkSecurity(File file, String path, String auth) throws IOException{
-        codeReponse ="200 OK";
+    private static byte[] checkSecurity(File file, String path, String auth) throws IOException {
+        codeReponse = "200 OK";
         byte[] res = Files.readAllBytes(Paths.get(file.getPath() + "\\" + path));
         Boolean protege = Arrays.stream(file.list()).anyMatch(".htpasswd"::contains);
-        Boolean sendDatas =true;
-        if(Boolean.TRUE.equals(file.isDirectory() && protege) && auth == null) {
+        Boolean sendDatas = true;
+        if (Boolean.TRUE.equals(file.isDirectory() && protege) && auth == null) {
             codeReponse = "401 Unauthorized";
-            res = ("WWW-Authenticate: Basic realm=\" Access to "+file.getPath() + "\\" + path+"\"\r\n").getBytes();
-        } else if(Boolean.TRUE.equals(file.isDirectory() && protege) && auth != null){
-            sendDatas= checkAuth(file.getPath(),auth);
+            res = ("WWW-Authenticate: Basic realm=\" Access to " + file.getPath() + "\\" + path + "\"\r\n").getBytes();
+        } else if (Boolean.TRUE.equals(file.isDirectory() && protege) && auth != null) {
+            sendDatas = checkAuth(file.getPath(), auth);
         }
-        if(Boolean.FALSE.equals(sendDatas) ){
-            codeReponse= "403 Forbidden";
+        if (Boolean.FALSE.equals(sendDatas)) {
+            codeReponse = "403 Forbidden";
             res = "".getBytes();
         }
         return res;
     }
+
     private static Boolean checkAuth(String path, String auth) throws UnsupportedEncodingException {
-        boolean res =false;
+        boolean res = false;
         SecurityReader.setPath(path);
         byte[] decodedValue = Base64.getDecoder().decode(auth);
         String[] credentials = (new String(decodedValue, StandardCharsets.UTF_8.toString())).split(":");
         String hash = SecurityReader.getProp(credentials[0]);
-        if (hash != null){
+        if (hash != null) {
             MessageDigest md;
             try {
                 md = MessageDigest.getInstance("MD5");
-        
+
                 md.update(credentials[1].getBytes());
                 byte[] digest = md.digest();
                 StringBuilder hashString = new StringBuilder();
-                for ( int i = 0; i < digest.length; ++i ) {
+                for (int i = 0; i < digest.length; ++i) {
                     String hex = Integer.toHexString(digest[i]);
-                    if ( hex.length() == 1 ) {
-                    hashString.append('0');
-                    hashString.append(hex.charAt(hex.length()-1));
+                    if (hex.length() == 1) {
+                        hashString.append('0');
+                        hashString.append(hex.charAt(hex.length() - 1));
                     } else {
-                    hashString.append(hex.substring(hex.length()-2));
+                        hashString.append(hex.substring(hex.length() - 2));
                     }
                 }
-                res= hash.equals(hashString.toString());
+                res = hash.equals(hashString.toString());
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
         }
-        
+
         return res;
     }
 
@@ -129,6 +130,14 @@ public class SiteReader {
         } else {
             return CONTENT_HTML;
         }
+    }
+
+    public static boolean canGzipThisRessource(String path) {
+        if (path.length() > 1) {
+            String extension = getExtensionFromPath(path);
+            return extension.equals("css") || extension.equals("js");
+        }
+        return false;
     }
 
     private static String getExtensionFromPath(String path) {
