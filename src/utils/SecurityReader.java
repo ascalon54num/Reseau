@@ -5,11 +5,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Lecteur des propriétés de sécurité du serveur
+ * @author user
+ *
+ */
 public class SecurityReader {
-
+	
+	/**
+	 * Chemin du fichier contenant les propriétés
+	 */
     private static String path;
+    /**
+     * Instance du singleton
+     */
     private  static SecurityReader instance;
-
+    /**
+     * Propriétés lues dans le fichier
+     */
     private final Properties props;
 
     private SecurityReader() {
@@ -21,7 +34,11 @@ public class SecurityReader {
             ex.printStackTrace();
         }
     }
-
+    
+    /**
+     * Fonction retournant l'instance du singleton
+     * @return SecurityReader
+     */
     public static SecurityReader getInstance() {
         if ( instance == null){
            instance = new SecurityReader();
@@ -29,6 +46,11 @@ public class SecurityReader {
         return instance;
     }
 
+    /**
+     * Fonction pour récupèrer une propriété spécifique du fichier de configuration
+     * @param name
+     * @return String
+     */
     public static String getProp(String name) {
         return getInstance().props.getProperty(name);
     }

@@ -11,12 +11,32 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 
+/**
+ * Classe gérant l'analyse de la requête et renvoi le code de réponse et le contenu à renvoyer
+ * @author user
+ *
+ */
 public class SiteReader {
-
+	/**
+	 * Chemin du dossier de stockage des sites
+	 */
     private static final String SITES_DIRECTORY = ConfigReader.getProp("hosts_dir");
+    /**
+     * Type de contenu de réponse
+     */
     public static final String CONTENT_HTML = "text/html";
+    /**
+     * Code de la réponse
+     */
     private static String codeReponse;
-
+    
+    /**
+     * Fonction pour le traitement des requêtes get
+     * @param dns
+     * @param path
+     * @param auth
+     * @return
+     */
     public static byte[] get(String dns, String path, String auth) {
         System.out.println("PATH = " + path);
         if (path.equalsIgnoreCase("/")) {
@@ -30,6 +50,13 @@ public class SiteReader {
         }
     }
 
+    /**
+     * Fonction de récupération des ressources demandées par la requête
+     * @param dns
+     * @param path
+     * @param auth
+     * @return byte[]
+     */
     private static byte[] getRessource(String dns, String path, String auth) {
         try {
             File directory = new File(SITES_DIRECTORY);
@@ -73,7 +100,14 @@ public class SiteReader {
         }
         return res;
     }
-
+    
+    /**
+     * Fonction de vérification de l'authentification
+     * @param path
+     * @param auth
+     * @return Boolean
+     * @throws UnsupportedEncodingException
+     */
     private static Boolean checkAuth(String path, String auth) throws UnsupportedEncodingException {
         boolean res = false;
         SecurityReader.setPath(path);
@@ -105,7 +139,12 @@ public class SiteReader {
 
         return res;
     }
-
+    
+    /**
+     * Fonction retournant le contenu et code de réponse pour une requête get sur localhost (127.0.0.1)
+     * @param auth
+     * @return byte[]
+     */
     public static byte[] getDefaultHtml(String auth) {
         try {
             File directory = new File(SITES_DIRECTORY);
@@ -115,7 +154,12 @@ public class SiteReader {
             return null;
         }
     }
-
+    
+    /**
+     * Fonction retournant le type de contenu
+     * @param path
+     * @return
+     */
     public static String getContentType(String path) {
         if (path.length() > 1) {
             String extension = getExtensionFromPath(path);
@@ -141,6 +185,11 @@ public class SiteReader {
         }
     }
 
+    /**
+     * Fonction indiquant si on peut utiliser gzip sur la réponse à la requête
+     * @param path
+     * @return boolean
+     */
     public static boolean canGzipThisRessource(String path) {
         if (path.length() > 1) {
             String extension = getExtensionFromPath(path);
