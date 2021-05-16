@@ -7,19 +7,19 @@ import java.util.Properties;
 
 /**
  * Lecteur des propriétés de sécurité du serveur
- * @author user
  *
+ * @author user
  */
 public class SecurityReader {
-	
-	/**
-	 * Chemin du fichier contenant les propriétés
-	 */
+
+    /**
+     * Chemin du fichier contenant les propriétés
+     */
     private static String path;
     /**
      * Instance du singleton
      */
-    private  static SecurityReader instance;
+    private static SecurityReader instance;
     /**
      * Propriétés lues dans le fichier
      */
@@ -34,20 +34,22 @@ public class SecurityReader {
             ex.printStackTrace();
         }
     }
-    
+
     /**
      * Fonction retournant l'instance du singleton
+     *
      * @return SecurityReader
      */
     public static SecurityReader getInstance() {
-        if ( instance == null){
-           instance = new SecurityReader();
+        if (instance == null) {
+            instance = new SecurityReader();
         }
         return instance;
     }
 
     /**
      * Fonction pour récupèrer une propriété spécifique du fichier de configuration
+     *
      * @param name
      * @return String
      */
@@ -56,6 +58,6 @@ public class SecurityReader {
     }
 
     public static void setPath(String path) {
-        SecurityReader.path = path+"\\.htpasswd";
+        SecurityReader.path = path + "\\.htpasswd";
     }
 }

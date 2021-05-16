@@ -14,6 +14,10 @@ Le navigateur se charge ensuite de décompresser le fichier pour qu'il soit corr
 ***
 * [Java](https://openjdk.java.net/)
 
+## Prerequis
+***
+Il faut avoir java d'installé pour pouvoir executer des ``.jar``
+
 ## Installation
 ***
 ### Ajouter des faux DNS
@@ -36,12 +40,10 @@ Il est toutefois possible d'accéder au site par le biais de l'URL entière :
 
 ## Utilisation
 ***
-Exécuter la commande ```run``` dans le dossier suivant.
+Il suffit de double cliquer sur le fichier ```app.bat``` dans le dossier racine.
 
-```shell
-bindist/bin
-```
-Le serveur devrait se lancer
+Le serveur devrait se lancer et vous pouvez tester son fonctionnement en tapant ``127.0.0.1`` dans 
+votre navigateur.
 
 ## Arborescence
 ***
@@ -63,10 +65,12 @@ Reseau
 │   └───verti
 │           ...
 │
-└───utils
-        ConfigReader.java
-        SecurityReader.java
-        SiteReader.java
+├───utils
+│       ConfigReader.java
+│       SecurityReader.java
+│       SiteReader.java
+│
+└─── Reseau.jar
 ```
 
 ## Auteur

@@ -6,13 +6,14 @@ import java.net.Socket;
 
 
 public class Server {
-	/**
-	 * Main du serveur
-	 * @param args
-	 * @throws IOException
-	 */
+    /**
+     * Main du serveur
+     *
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
-    	//Recupération du port dans le fichier de config
+        //Recupération du port dans le fichier de config
         int port = Integer.parseInt(ConfigReader.getProp("port"));
         try (ServerSocket server = new ServerSocket(port)) {
             System.out.println("[Serveur] Démarrage du serveur sur " + ConfigReader.getProp("address") + ":" + port + ".\r\n");

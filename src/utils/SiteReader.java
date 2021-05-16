@@ -13,13 +13,13 @@ import java.util.Base64;
 
 /**
  * Classe gérant l'analyse de la requête et renvoi le code de réponse et le contenu à renvoyer
- * @author user
  *
+ * @author user
  */
 public class SiteReader {
-	/**
-	 * Chemin du dossier de stockage des sites
-	 */
+    /**
+     * Chemin du dossier de stockage des sites
+     */
     private static final String SITES_DIRECTORY = ConfigReader.getProp("hosts_dir");
     /**
      * Type de contenu de réponse
@@ -29,9 +29,10 @@ public class SiteReader {
      * Code de la réponse
      */
     private static String codeReponse;
-    
+
     /**
      * Fonction pour le traitement des requêtes get
+     *
      * @param dns
      * @param path
      * @param auth
@@ -52,6 +53,7 @@ public class SiteReader {
 
     /**
      * Fonction de récupération des ressources demandées par la requête
+     *
      * @param dns
      * @param path
      * @param auth
@@ -100,9 +102,10 @@ public class SiteReader {
         }
         return res;
     }
-    
+
     /**
      * Fonction de vérification de l'authentification
+     *
      * @param path
      * @param auth
      * @return Boolean
@@ -139,9 +142,10 @@ public class SiteReader {
 
         return res;
     }
-    
+
     /**
      * Fonction retournant le contenu et code de réponse pour une requête get sur localhost (127.0.0.1)
+     *
      * @param auth
      * @return byte[]
      */
@@ -154,9 +158,10 @@ public class SiteReader {
             return null;
         }
     }
-    
+
     /**
      * Fonction retournant le type de contenu
+     *
      * @param path
      * @return
      */
@@ -187,6 +192,7 @@ public class SiteReader {
 
     /**
      * Fonction indiquant si on peut utiliser gzip sur la réponse à la requête
+     *
      * @param path
      * @return boolean
      */

@@ -5,18 +5,19 @@ import java.net.Socket;
 import java.util.zip.GZIPOutputStream;
 
 public class ServiceClient implements Runnable {
-	
-	/**
-	 * Connection socket de l'utilisateur ayant fait une requête
-	 */
+
+    /**
+     * Connection socket de l'utilisateur ayant fait une requête
+     */
     private final Socket connection;
     /**
      * Id du thread
      */
     private final String id;
-    
+
     /**
-     * Constructeur de la cible du thread 
+     * Constructeur de la cible du thread
+     *
      * @param laConnection
      * @param mid
      */
@@ -35,7 +36,7 @@ public class ServiceClient implements Runnable {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             OutputStream out = connection.getOutputStream();
             try {
-            	//Récupération du path de la requête
+                //Récupération du path de la requête
                 String path = in.readLine().split(" ")[1];
                 //Récupération du nom de domaine de la requete
                 String dns = in.readLine().split(" ")[1];
@@ -71,7 +72,7 @@ public class ServiceClient implements Runnable {
                 }
 
                 if (!contentType.equals("")) {
-                	//Ecriture de l'entête du type de contenu
+                    //Ecriture de l'entête du type de contenu
                     out.write(("Content-Type: " + contentType + "\r\n").getBytes());
                 }
                 //Ecriture du contenu de la réponse
@@ -87,15 +88,17 @@ public class ServiceClient implements Runnable {
                 closeFlux(in, out);
 
             } catch (Exception e) {
-            	//En cas d'exception 
+                //En cas d'exception
                 out.write("HTTP/1.0 404 NOT FOUND\r\n".getBytes());
                 closeFlux(in, out);
             }
         } catch (Exception ignored) {
         }
     }
+
     /**
      * Fonction qui ferme la connexion
+     *
      * @param in
      * @param out
      * @throws IOException
