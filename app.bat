@@ -1,1 +1,2 @@
-java -jar src/reseau.jar
+cd src
+java -jar reseau.jar
