@@ -45,6 +45,14 @@ Il suffit de double cliquer sur le fichier ```app.bat``` dans le dossier racine.
 Le serveur devrait se lancer et vous pouvez tester son fonctionnement en tapant ``127.0.0.1`` dans 
 votre navigateur.
 
+Quand vous arriverez sur la page, il faudra renseigner un utilisateur et un mot de passe
+```
+Login ==> ascalon
+MDP ==> test
+```
+
+Amusez vous bien avec ce serveur Miapache (Miage Apache)
+
 ## Arborescence
 ***
 ```
