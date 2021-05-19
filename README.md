@@ -53,6 +53,18 @@ MDP ==> test
 
 Amusez vous bien avec ce serveur Miapache (Miage Apache)
 
+
+## Configuration
+***
+Dans le fichier ``Reseau/config/config.conf`` il y a certaines configurations
+```lombok.config
+address = 127.0.0.1     # Adresse du serveur à taper dans l'URL du navigateur
+port = 80               # Port de communication du serveur
+hosts_dir = html        # Emplacement du dossier des sites (ne pas modifier sauf si vous savez ce que vous faites (on en doute pas !))
+```
+Le changement d'une de ces options nécessite de re-builder le *.jar* en le plaçant 
+au même endroit que le précédent.
+
 ## Arborescence
 ***
 ```
